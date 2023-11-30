@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- ... -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+  </head>
+  <body class="body-style">
+    <div class="center-container">
+      <h3 class="text-center">Login</h3>
+      <form action="/" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="id_name">Your name:</label>
+          {{ form.name }}
+        </div>
+        <div class="form-group">
+          <label for="id_password">Your password:</label>
+          {{ form.password }}
+        </div>
+        <button type="submit" class="btn btn-primary full-width-button">
+          Submit
+        </button>
+      </form>
+    </div>
+  </body>
+</html>

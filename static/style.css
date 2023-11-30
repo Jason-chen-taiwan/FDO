@@ -1,0 +1,27 @@
+/* 通用样式 */
+.body-style {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
+
+.center-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.full-width-button {
+  width: 100%;
+}
+
+.bottom-margin {
+  margin-bottom: 15px;
+}
