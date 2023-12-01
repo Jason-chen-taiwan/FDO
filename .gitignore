@@ -4,3 +4,4 @@ front/migrations/
 # 忽略 __pycache__ 文件夹
 FDO_DEMO/__pycache__/
 
+front/__pycache__/

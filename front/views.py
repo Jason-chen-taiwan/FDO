@@ -15,3 +15,4 @@ def usr_login(request):
         return HttpResponse("Login succese")
     else:
         return HttpResponse("Login fail")
+    

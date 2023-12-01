@@ -15,7 +15,13 @@
         <h2 class="text-center">Register</h2>
         <form method="post" class="mt-4">
           {% csrf_token %} {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Register</button>
+          <div class="row"> <!-- 添加行容器 -->
+            <div class="col-6"> <!-- 第一个按钮的列 -->
+              <button type="submit" class="btn btn-primary full-width-button">Register</button>
+            </div>
+            <div class="col-6"> <!-- 第二个按钮的列 -->
+              <a href="/front" class="btn btn-primary full-width-button">Back</a>
+            </div>
         </form>
       </div>
     </div>
