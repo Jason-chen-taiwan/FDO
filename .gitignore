@@ -1,0 +1,6 @@
+# 忽略 migrations 文件夹
+front/migrations/
+
+# 忽略 __pycache__ 文件夹
+FDO_DEMO/__pycache__/
+
