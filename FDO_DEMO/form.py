@@ -11,6 +11,6 @@ class RegisterForm(forms.Form):
     identity = forms.MultipleChoiceField(
         required=True,
         widget=forms.CheckboxSelectMultiple,
-        choices=(('option1', 'manufacture'), ('option2', 'Rendezvous'), ('option3', 'Owner')),  # 根据需要定义选项
+        choices=(('manufacture', 'manufacture'), ('Rendezvous', 'Rendezvous'), ('Owner', 'Owner')),  # 根据需要定义选项
         label="Identity"
     )

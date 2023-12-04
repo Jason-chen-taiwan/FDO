@@ -18,7 +18,7 @@ def login_page(request):
             if user is not None:
                 login(request, user)
                 # 重定向到成功登录后的页面
-                return redirect('front')
+                return redirect('../front/aio')
             else:
                 # 添加错误消息
                 form.add_error(None, "Invalid username or password")

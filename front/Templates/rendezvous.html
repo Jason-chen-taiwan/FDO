@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo Page</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h1>Welcome to the rendezvous Page</h1>
+          {% if user.is_authenticated %}
+          <p>Welcome, {{ user.username }}!</p>
+          <!-- 显示与用户相关的信息 -->
+          <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Logout</button>
+            <a href="/front/aio" class="btn btn-primary">back</a>
+          </form>
+          {% else %}
+          <p>You are not logged in.</p>
+          <!-- 显示登录链接或其他信息 -->
+          <a href="/login" class="btn btn-primary">Login</a>
+          {% endif %}
+        </div>
+      </div>
+      <!-- 其他页面内容 -->
+    </div>
+  </body>
+</html>
