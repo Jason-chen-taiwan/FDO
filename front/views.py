@@ -23,11 +23,4 @@ def logout_view(request):
     # 重定向到首页或登录页面
     return redirect('../front')  # 请替换为合适的 URL 名称
     
-def mfg_view(request):
-    return render(request, "manufacturer.html")
 
-def rv_view(request):
-    return render(request, "rendezvous.html")
-
-def owner_view(request):
-    return render(request, "owner.html")

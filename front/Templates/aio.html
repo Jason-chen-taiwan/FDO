@@ -18,11 +18,15 @@
           <p>Welcome, {{ user.username }}!</p>
           <!-- 显示与用户相关的信息 -->
           {% if 'manufacture' in identity %}
-          <a href="/front/manufacturer" class="btn btn-info">manufacture</a>
+          <a href="/front/manufacturer/dashboard" class="btn btn-info"
+            >manufacture</a
+          >
           {% endif %} {% if 'Rendezvous' in identity %}
-          <a href="/front/rendezvous" class="btn btn-info">rendezvous</a>
+          <a href="/front/rendezvous/dashboard" class="btn btn-info"
+            >rendezvous</a
+          >
           {% endif %} {% if 'Owner' in identity %}
-          <a href="/front/owner" class="btn btn-info">owner</a>
+          <a href="/front/owner/dashboard" class="btn btn-info">owner</a>
           {% endif %}
           <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
