@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     "front",
     "mfg",
     "owner",
-    "rv"
+    "rv",
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
