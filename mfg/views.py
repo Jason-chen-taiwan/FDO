@@ -1,9 +1,17 @@
+import datetime
+import json
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from .forms import ServerInfoForm, OwnerInfo
 from postman.httprequest import post_http_digestAuth, get_http_digestAuth
 from django.contrib import messages
-from .models import ownerServerInfo
+from .models import ownerServerInfo, ClientMachine
+from dotenv import load_dotenv
+from datetime import datetime
+import os
+
+# load .env
+load_dotenv()
 
 # return context evry time 
 def initial_page_context():
@@ -34,9 +42,9 @@ def rvinfo_api(request):
         # print(url, ip, port)
         api_url = "http://fdosep.ofido.tw:8039/api/v1/rvinfo"
         
-        # 基本认证的用户名和密码
-        username = 'jasonchen'
-        password = 'fjdasoonchen'
+        # 获取环境变量
+        username = os.getenv('USERNAME')
+        password = os.getenv('PASSWORD')
 
         # 使用获取的数据构造请求体
         data = f'[[[5,"{url}"],[3,{port}],[12,2],[2,"{ip}"],[4,{port}]]]'
@@ -69,8 +77,8 @@ def owner_credential_get_api(request):
 
         url = request.POST.get('url', '')
         # print(url)
-        username = 'jasonchen'
-        password = 'fjdasoonchen'
+        username = os.getenv('USERNAME')
+        password = os.getenv('PASSWORD')
         response = get_http_digestAuth(url, username, password)
         # 假设服务器返回的是文本或JSON数据
         if response.ok:
@@ -87,12 +95,75 @@ def owner_credential_save_api(request):
     if request.method == 'POST':
         owner_credential = request.POST.get('owner_credential', '')
         ownername = request.POST.get('ownername', '')
+        rpusername = request.POST.get('rpusername')
         # 创建新的 ownerServerInfo 实例
         new_owner_server_info = ownerServerInfo(
             serverName=ownername, 
-            credential=owner_credential
+            credential=owner_credential,
+            rpbelong = rpusername
         )
         new_owner_server_info.save()
         context = initial_page_context()
         context['owner_credential_save_status']="成功"
+        return render(request, 'manufacturer.html', context)
+
+def get_ownerseerver_list(request):
+    if request.method =='POST':
+        # 获取所有ownerServerInfo实例
+        username = request.POST.get('rpusername', '')
+        print(username)
+        all_owner_server_info = ownerServerInfo.objects.filter(rpbelong=username)
+
+        # 将查询结果传递给模板
+        context = initial_page_context()
+        context['owner_servers'] = all_owner_server_info
+        return render(request, 'manufacturer.html', context)
+
+def client_ms_list_api(request):
+    if request.method =='POST':
+        seconds = request.POST.get('seconds', '')
+        print(seconds)
+        url = f'https://fdosep.ofido.tw:8038/api/v1/deviceinfo/{seconds}'
+        username = os.getenv('USERNAME')
+        password = os.getenv('PASSWORD')
+        response = get_http_digestAuth(url, username, password)
+        print(response.content.decode('utf-8'))
+
+        # 使用 .json() 方法解析 JSON 数据
+        data = response.json()
+        
+        context = initial_page_context()
+
+        save_status = []
+       # 遍历解析后的数据
+        for item in data:
+            try:
+                serial_no = item.get('serial_no', '')
+                guid = item.get('uuid', '')
+                timestamp = item.get('timestamp', '')
+                alias = item.get('alias', '')
+
+                # 将字符串格式的时间戳转换为 datetime 对象
+                di_timestamp = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f')
+
+                # 创建 ClientMachine 实例
+                client_machine, created = ClientMachine.objects.get_or_create(
+                    guid=guid,
+                    defaults={
+                        'serial_no': serial_no,
+                        'di_timestamp': di_timestamp,
+                        'attestation_type': alias
+                    }
+                )
+                save_status.append(f"{guid} create succese")
+                # 如果实例已存在并且有更新，可以在这里更新相应的字段
+                if not created:
+                    client_machine.serial_no = serial_no
+                    client_machine.di_timestamp = di_timestamp
+                    client_machine.attestation_type = alias
+                    client_machine.save()
+                save_status.append(f"{guid} update succese")
+            except:
+                save_status.append(f"{guid} faild")
+        context['owner_status']=save_status
         return render(request, 'manufacturer.html', context)
