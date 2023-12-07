@@ -8,3 +8,4 @@ class ServerInfoForm(forms.Form):
 
 class OwnerInfo(forms.Form):
     url = forms.CharField(label='URL', max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Enter URL'}))
+    ownername = forms.CharField(label='Owner Name', max_length=100)

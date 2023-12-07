@@ -22,6 +22,24 @@
               class="card-body bg-primary text-white border-black"
               style="border: 1px solid #000"
             >
+              <!-- 显示 Django 消息框架中的消息 -->
+              {% if messages %}
+              <div
+                class="alert-messages"
+                style="
+                  position: absolute;
+                  top: 10px;
+                  right: 10px;
+                  z-index: 1000;
+                "
+              >
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} m-0">
+                  {{ message }}
+                </div>
+                {% endfor %}
+              </div>
+              {% endif %}
               <h5 class="card-title">RP Server Details pull</h5>
               <form action="{% url 'rv_info' %}" method="post">
                 {% csrf_token %}
@@ -77,14 +95,15 @@
               </form>
             </div>
           </div>
-          <!-- owner credential list -->
+          <!-- get owner credential -->
           <div class="card custom-card">
             <div
               class="card-body bg-primary text-white border-black"
               style="border: 1px solid #000"
             >
               <h5 class="card-title">get owner credential</h5>
-              <form action="{% url 'rv_info' %}" method="post">
+              <form action="{% url 'getownercredential' %}" method="post">
+                {% csrf_token %}
                 <div class="row">
                   <div class="col-12">
                     <div class="form-group">
@@ -99,7 +118,76 @@
                     </div>
                   </div>
                 </div>
+                <div>
+                  <button
+                    type="submit"
+                    name="owner_info"
+                    class="btn btn-secondary"
+                  >
+                    Submit
+                  </button>
+                </div>
               </form>
+              <div
+                id="response-area"
+                style="
+                  display: block;
+                  border: 1px solid #ccc;
+                  min-height: 100px;
+                  background-color: #fff;
+                  margin-top: 10px;
+                  color: #000;
+                "
+              >
+                <!-- 这里将显示owner credential -->
+                {% if owner_credential %} {{ owner_credential }}{% else %}
+                <!-- 这里可以放置默认文本或留空 -->
+                {% endif %}
+              </div>
+              <!-- save owner credential space -->
+              <div style="margin-top: 10px">
+                <form action="{% url 'ownercredentialsave' %}" method="post">
+                  {% csrf_token %}
+                  <!-- 隐藏字段用于存储 api_response -->
+                  <input
+                    type="hidden"
+                    name="owner_credential"
+                    id="api-response-field"
+                    value="{% if owner_credential %}{{ owner_credential }}{% endif %}"
+                  />
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <h5>Save The Owner Credential</h5>
+                        {{ owner_form.ownername.label_tag }}
+                        <input
+                          type="text"
+                          name="{{ owner_form.ownername.name }}"
+                          id="{{ owner_form.ownername.id_for_label }}"
+                          class="form-control"
+                          placeholder="ENTER Owner Server name"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-secondary btn-lg">
+                    save
+                  </button>
+                  {% if owner_credential_save_status %}
+                  <span style="margin-left: 20px"
+                    >{{ owner_credential_save_status }}</span
+                  >{% endif %}
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- list all owner server  -->
+          <div class="card custom-card">
+            <div
+              class="card-body bg-primary text-white border-black"
+              style="border: 1px solid #000"
+            >
+              <h5 class="card-title">owner credential list</h5>
             </div>
           </div>
           <form action="{% url 'logout' %}" method="post">
