@@ -8,4 +8,6 @@ urlpatterns = [
     path('api/v1/ownercredentialsave/', views.owner_credential_save_api, name='ownercredentialsave'),
     path('api/v1/ownercredentiallist/', views.get_ownerseerver_list, name='ownercredentiallist'),
     path('api/v1/clientmslist/', views.client_ms_list_api, name='clientMsList'),
+    path('api/v1/dimachinelist/', views.list_all_client_api, name='dimachinelist'),
+    
 ]

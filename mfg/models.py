@@ -10,4 +10,5 @@ class ClientMachine(models.Model):
     serial_no = models.CharField(max_length=50)  
     guid = models.CharField(max_length=50,unique=True)  
     di_timestamp = models.DateTimeField()
-    attestation_type = models.CharField(max_length=128) 
+    attestation_type = models.CharField(max_length=128)
+    clientbelong = models.CharField(max_length=128)

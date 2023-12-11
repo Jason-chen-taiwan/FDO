@@ -211,7 +211,7 @@
               </form>
             </div>
           </div>
-          <!-- list the DI register machine -->
+          <!-- list the DI register machine with sc-->
           <div class="card custom-card">
             <div
               class="card-body bg-primary text-white border-black"
@@ -220,6 +220,12 @@
               <h5 class="card-title">Device initial machine list in some ms</h5>
               <form action="{% url 'clientMsList' %}" method="post">
                 {% csrf_token %}
+                <input
+                  type="hidden"
+                  name="clientusername"
+                  id="clientusername"
+                  value="{{ user.username }}"
+                />
                 <div class="mb-3">
                   <label for="exampleFormControlInput1" class="form-label"
                     >Seconds you want check</label
@@ -248,6 +254,32 @@
                     {% endif %}
                   </div>
                 </div>
+              </form>
+            </div>
+          </div>
+          <!-- list all di machine -->
+          <div class="card custom-card">
+            <div
+              class="card-body bg-primary text-white border-black"
+              style="border: 1px solid #000"
+            >
+              <h5 class="card-title">DI machine list</h5>
+              <form action="{% url 'dimachinelist' %}" method="post">
+                <input
+                  type="hidden"
+                  name="clientusername"
+                  id="clientusername"
+                  value="{{ user.username }}"
+                />
+                {% csrf_token %} {% for client_machine in client_machine %}
+                <p>serial_no: {{ client_machine.serial_no }}</p>
+                <p>guid: {{ client_machine.guid }}</p>
+                <p>di_timestamp: {{ client_machine.di_timestamp }}</p>
+                <p>attestation_type: {{ client_machine.attestation_type }}</p>
+                {% endfor %}
+                <button type="submit" class="btn btn-danger">
+                  show all client machine
+                </button>
               </form>
             </div>
           </div>

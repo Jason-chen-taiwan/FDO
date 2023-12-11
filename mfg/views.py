@@ -90,7 +90,6 @@ def owner_credential_get_api(request):
             context['owner_credential'] = '请求失败，状态码：' + str(response.status_code)
             return HttpResponse(context)
 
-
 def owner_credential_save_api(request):
     if request.method == 'POST':
         owner_credential = request.POST.get('owner_credential', '')
@@ -122,6 +121,7 @@ def get_ownerseerver_list(request):
 def client_ms_list_api(request):
     if request.method =='POST':
         seconds = request.POST.get('seconds', '')
+        clientusername =  request.POST.get('clientusername', '')
         print(seconds)
         url = f'https://fdosep.ofido.tw:8038/api/v1/deviceinfo/{seconds}'
         username = os.getenv('USERNAME')
@@ -152,18 +152,35 @@ def client_ms_list_api(request):
                     defaults={
                         'serial_no': serial_no,
                         'di_timestamp': di_timestamp,
-                        'attestation_type': alias
+                        'attestation_type': alias,
+                        'clientbelong' : clientusername
                     }
                 )
-                save_status.append(f"{guid} create succese")
+                
                 # 如果实例已存在并且有更新，可以在这里更新相应的字段
                 if not created:
                     client_machine.serial_no = serial_no
                     client_machine.di_timestamp = di_timestamp
                     client_machine.attestation_type = alias
+                    client_machine.clientbelong = clientusername
                     client_machine.save()
-                save_status.append(f"{guid} update succese")
+                    save_status.append(f"{guid} update succese")
+                else:
+                    save_status.append(f"{guid} create succese")
             except:
                 save_status.append(f"{guid} faild")
         context['owner_status']=save_status
+        return render(request, 'manufacturer.html', context)
+
+def list_all_client_api(request):
+    if request.method =='POST':
+        # 获取所有ownerServerInfo实例
+        clientusername = request.POST.get('clientusername', '')
+        print(clientusername)
+        all_client_machine_info = ClientMachine.objects.filter(clientbelong=clientusername)
+
+        print(all_client_machine_info)
+        # 将查询结果传递给模板
+        context = initial_page_context()
+        context['client_machine'] = all_client_machine_info
         return render(request, 'manufacturer.html', context)
