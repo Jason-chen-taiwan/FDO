@@ -1,13 +1,13 @@
-import datetime
 import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from .forms import ServerInfoForm, OwnerInfo
 from postman.httprequest import post_http_digestAuth, get_http_digestAuth
 from django.contrib import messages
-from .models import ownerServerInfo, ClientMachine
+from .models import ownerServerInfo, ClientMachine, OwnershipVoucher
 from dotenv import load_dotenv
 from datetime import datetime
+from django.utils import timezone
 import os
 
 # load .env
@@ -183,4 +183,73 @@ def list_all_client_api(request):
         # 将查询结果传递给模板
         context = initial_page_context()
         context['client_machine'] = all_client_machine_info
+        return render(request, 'manufacturer.html', context)
+
+def show_all_ownerCredential_serialNo_api(request):
+    if request.method =='POST':
+        # 获取所有ownerServerInfo实例
+        clientusername = request.POST.get('clientusername', '')
+        all_client_machine_info = ClientMachine.objects.filter(clientbelong=clientusername)
+        all_owner_server_info = ownerServerInfo.objects.filter(rpbelong=clientusername)
+        # 将查询结果传递给模板
+        context = initial_page_context()
+        context['client_machine'] = all_client_machine_info
+        context['owner_servers'] = all_owner_server_info
+        return render(request, 'manufacturer.html', context)
+
+def makeOwnershipVoucher_api(request):
+    if request.method =='POST':
+        clientusername = request.POST.get('clientusername', '')
+        ownerserver_name = request.POST.get('selected_owner_server', '')
+        client_guid = request.POST.get('selected_client_machine', '')
+
+        client_machine = ClientMachine.objects.filter(guid=client_guid, clientbelong=clientusername).first()
+        owner_server = ownerServerInfo.objects.filter(serverName=ownerserver_name, rpbelong=clientusername).first()
+
+        if not client_machine:
+            # 没有找到对应的客户端机器
+            return HttpResponse("未找到指定的客户端机器。")
+
+        if not owner_server:
+            # 没有找到对应的所有者服务器
+            return HttpResponse("未找到指定的所有者服务器。")
+
+        url = f'http://fdosep.ofido.tw:8039/api/v1/mfg/vouchers/{client_machine.serial_no}'
+        username = os.getenv('USERNAME')
+        password = os.getenv('PASSWORD')
+        response = post_http_digestAuth(url, username, password, owner_server.credential)
+
+        if response.ok:  # 确保响应成功
+            ownership_voucher_content = response.content.decode('utf-8')
+            # 创建 OwnershipVoucher 实例
+            ownership_voucher = OwnershipVoucher(
+                serverName=owner_server,
+                serial_no=client_machine,
+                create_time=timezone.now(),
+                ownership_voucher=ownership_voucher_content,
+                clientbelong=clientusername
+            )
+            ownership_voucher.save()  # 保存到数据库
+
+            context = initial_page_context()
+            context['ownership_voucher'] = ownership_voucher_content
+            return render(request, 'manufacturer.html', context)
+        else:
+            # API 响应失败
+            return HttpResponse("API 请求失败，状态码：" + str(response.status_code))
+
+    # 如果请求方法不是 POST
+    return redirect('some_default_view')  # 重定向到默认视图或错误页面
+
+def ownership_voucher_list_api(request):
+    if request.method == 'POST':
+        clientusername = request.POST.get('clientusername', '')
+
+        # 根据 clientusername 获取所有相关的 OwnershipVoucher 实例
+        ownership_vouchers = OwnershipVoucher.objects.filter(clientbelong=clientusername).select_related('serverName', 'serial_no')
+
+        context = {
+            'ownership_voucher_list': ownership_vouchers,
+        }
+
         return render(request, 'manufacturer.html', context)

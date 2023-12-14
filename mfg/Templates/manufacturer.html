@@ -201,14 +201,30 @@
                   id="rp_username"
                   value="{{ user.username }}"
                 />
-                {% csrf_token %} {% for owner_server in owner_servers %}
-                <p>Server Name: {{ owner_server.serverName }}</p>
-                <p>Credential: {{ owner_server.credential }}</p>
-                {% endfor %}
+                {% csrf_token %}
+                <div class="bg-white">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Server Name</th>
+                        <th scope="col">Credential</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for owner_server in owner_servers %}
+                      <tr>
+                        <td>{{ owner_server.serverName }}</td>
+                        <td>{{ owner_server.credential }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
                 <button type="submit" class="btn btn-danger">
                   show all credentials
                 </button>
               </form>
+              <form></form>
             </div>
           </div>
           <!-- list the DI register machine with sc-->
@@ -271,16 +287,205 @@
                   id="clientusername"
                   value="{{ user.username }}"
                 />
-                {% csrf_token %} {% for client_machine in client_machine %}
-                <p>serial_no: {{ client_machine.serial_no }}</p>
-                <p>guid: {{ client_machine.guid }}</p>
-                <p>di_timestamp: {{ client_machine.di_timestamp }}</p>
-                <p>attestation_type: {{ client_machine.attestation_type }}</p>
-                {% endfor %}
+                {% csrf_token %}
+                <!-- 表格开始 -->
+                <div class="bg-white">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Serial No</th>
+                        <th scope="col">GUID</th>
+                        <th scope="col">DI Timestamp</th>
+                        <th scope="col">Attestation Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for client_machine in client_machine %}
+                      <tr>
+                        <td>{{ client_machine.serial_no }}</td>
+                        <td>{{ client_machine.guid }}</td>
+                        <td>{{ client_machine.di_timestamp }}</td>
+                        <td>{{ client_machine.attestation_type }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
                 <button type="submit" class="btn btn-danger">
                   show all client machine
                 </button>
               </form>
+            </div>
+          </div>
+          <!-- create ownership voucher -->
+          <div class="card custom-card">
+            <div
+              class="card-body bg-primary text-white border-black"
+              style="border: 1px solid #000"
+            >
+              <div class="row align-items-center">
+                <div>
+                  <h5 class="card-title">
+                    Make Ownership Voucher 請選擇需要使用的owner
+                    credential以及Serial No
+                  </h5>
+                </div>
+                <!-- 顯示所有資訊的表格給使用者選擇 -->
+                <form action="{% url 'showOwnerAndSerialNo' %}" method="post">
+                  {% csrf_token %}
+                  <input
+                    type="hidden"
+                    name="clientusername"
+                    id="clientusername"
+                    value="{{ user.username }}"
+                  />
+                  <div class="col-auto">
+                    <button type="submit" class="btn btn-danger">
+                      show all Owner credential and serial No
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <!-- 產生ownership voucher主要的地方 -->
+              <form action="{% url 'makeOwnershipVoucher' %}" method="post">
+                {% csrf_token %}
+                <input
+                  type="hidden"
+                  name="clientusername"
+                  id="clientusername"
+                  value="{{ user.username }}"
+                />
+                <h4>DI machine Information</h4>
+                <div class="bg-white">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Serial No</th>
+                        <th scope="col">GUID</th>
+                        <th scope="col">DI Timestamp</th>
+                        <th scope="col">Attestation Type</th>
+                        <th scope="col">Select</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for client_machine in client_machine %}
+                      <tr>
+                        <td>{{ client_machine.serial_no }}</td>
+                        <td>{{ client_machine.guid }}</td>
+                        <td>{{ client_machine.di_timestamp }}</td>
+                        <td>{{ client_machine.attestation_type }}</td>
+                        <td>
+                          <input
+                            type="radio"
+                            name="selected_client_machine"
+                            value="{{ client_machine.guid }}"
+                          />
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                <h4>Owner Server Information</h4>
+                <div class="bg-white">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Server Name</th>
+                        <th scope="col">Credential</th>
+                        <th scope="col">Select</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for owner_server in owner_servers %}
+                      <tr>
+                        <td>{{ owner_server.serverName }}</td>
+                        <td>{{ owner_server.credential }}</td>
+                        <td>
+                          <input
+                            type="radio"
+                            name="selected_owner_server"
+                            value="{{ owner_server.serverName }}"
+                          />
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                <div>
+                  <button type="submit" class="btn btn-danger">
+                    make Ownership Voucher
+                  </button>
+                </div>
+                <div
+                  id="response-area"
+                  style="
+                    display: block;
+                    border: 1px solid #ccc;
+                    min-height: 100px;
+                    background-color: #fff;
+                    margin-top: 10px;
+                    color: #000;
+                  "
+                >
+                  <!-- 这里将显示ownership voucher -->
+                  {% if ownership_voucher %} {{ ownership_voucher }}
+                  <!-- 这里可以放置默认文本或留空 -->
+                  {% endif %}
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- list all ownership voucher -->
+          <div class="card custom-card">
+            <div
+              class="card-body bg-primary text-white border-black"
+              style="border: 1px solid #000"
+            >
+              <div class="row align-items-center">
+                <div>
+                  <h5 class="card-title">list all ownership voucher</h5>
+                </div>
+                <!-- 顯示所有資訊的表格給使用者選擇 -->
+                <form action="{% url 'ownership_voucher_list' %}" method="post">
+                  {% csrf_token %}
+                  <input
+                    type="hidden"
+                    name="clientusername"
+                    id="clientusername"
+                    value="{{ user.username }}"
+                  />
+                  <div class="col-auto">
+                    <button type="submit" class="btn btn-danger">
+                      show all Ownership Voucher
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <h4>Ownership_voucher Information</h4>
+              <div class="bg-white">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">serverName</th>
+                      <th scope="col">serial_no</th>
+                      <th scope="col">create_time</th>
+                      <th scope="col">ownership_voucher</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for ownership_voucher in ownership_voucher_list %}
+                    <tr>
+                      <td>{{ ownership_voucher.serverName.serverName }}</td>
+                      <td>{{ ownership_voucher.serial_no.serial_no }}</td>
+                      <td>{{ ownership_voucher.create_time }}</td>
+                      <td>{{ ownership_voucher.ownership_voucher }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
           <form action="{% url 'logout' %}" method="post">
