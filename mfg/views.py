@@ -1,6 +1,6 @@
 import json
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from .forms import ServerInfoForm, OwnerInfo
 from postman.httprequest import post_http_digestAuth, get_http_digestAuth
 from django.contrib import messages
@@ -252,4 +252,23 @@ def ownership_voucher_list_api(request):
             'ownership_voucher_list': ownership_vouchers,
         }
 
+        return render(request, 'manufacturer.html', context)
+
+def sendownership_api(request):
+    if request.method == 'POST':
+        owenr_url  = request.POST.get('ownerurl')
+        selected_voucher_id = request.POST.get('selected_voucher')
+        # 获取对应ID的OwnershipVoucher实例
+        ownership_voucher_instance = get_object_or_404(OwnershipVoucher, id=selected_voucher_id)
+        # 提取ownership_voucher字段的内容
+        ownership_voucher_content = ownership_voucher_instance.ownership_voucher
+        url = owenr_url
+        username = os.getenv('USERNAME')
+        password = os.getenv('PASSWORD')
+        response = post_http_digestAuth(url, username, password, ownership_voucher_content)
+        print(response.content.decode('utf-8'))
+        response_id = response.content.decode('utf-8')
+        context = {
+            'response_id': response_id,
+        }
         return render(request, 'manufacturer.html', context)

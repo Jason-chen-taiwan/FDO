@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/v1/showownerserialno/', views.show_all_ownerCredential_serialNo_api, name='showOwnerAndSerialNo'),
     path('api/v1/makeOwnershipVoucher_api/', views.makeOwnershipVoucher_api, name='makeOwnershipVoucher'),
     path('api/v1/ownershipvoucherlist/', views.ownership_voucher_list_api, name='ownership_voucher_list'),
+    path('api/v1/sendownership/', views.sendownership_api, name='sendownership'),
 ]

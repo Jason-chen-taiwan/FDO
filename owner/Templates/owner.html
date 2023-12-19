@@ -16,7 +16,214 @@
           <h1>Welcome to the owner Page</h1>
           {% if user.is_authenticated %}
           <p>Welcome, {{ user.username }}!</p>
-          <!-- 显示与用户相关的信息 -->
+          <!-- RVBlod TO2 deriction -->
+          <div class="card custom-card">
+            <div
+              class="card-body bg-primary text-white border-black"
+              style="border: 1px solid #000"
+            >
+              <!-- 显示 Django 消息框架中的消息 -->
+              <h5 class="card-title">RVBlod TO2 deriction pull</h5>
+              <form action="{% url 'to2deriction' %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      {{ form.url.label_tag }}
+                      <input
+                        type="text"
+                        name="{{ form.url.name }}"
+                        id="{{ form.url.id_for_label }}"
+                        class="form-control"
+                        placeholder="ENTER TO2 deriction Server DNS"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group">
+                      {{ form.ip.label_tag }}
+                      <input
+                        type="text"
+                        name="{{ form.ip.name }}"
+                        id="{{ form.ip.id_for_label }}"
+                        class="form-control"
+                        placeholder="ENTER TO2 deriction Server IP"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-group">
+                      {{ form.port.label_tag }}
+                      <input
+                        type="text"
+                        name="{{ form.port.name }}"
+                        id="{{ form.port.id_for_label }}"
+                        class="form-control"
+                        placeholder="Enter TO2 deriction Server Port Number"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <button type="submit" name="RV_info" class="btn btn-danger">
+                    Submit
+                  </button>
+                  {% if status %}{{ status }}{% endif %}
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- list all machine -->
+          <div class="card custom-card">
+            <div
+              class="card-body bg-primary text-white border-black"
+              style="border: 1px solid #000"
+            >
+              <form action="{% url 'allguid' %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                  <h5 class="card-title mr-3">List all machine</h5>
+                  <button type="submit" class="btn btn-danger">
+                    list all machine
+                  </button>
+                </div>
+                <!-- 迭代 list_guid 并将每个 GUID 显示在单独的一行上 -->
+                <!-- 显示 GUID 列表的表格 -->
+                <div class="bg-white">
+                  {% if list_guid %}
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="text-center">GUID</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for guid in list_guid %}
+                      <tr>
+                        <td class="text-center">{{ guid }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% endif %}
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- TO0 Triger -->
+          <div>
+            <div
+              class="card-body bg-primary text-white border-black"
+              style="border: 1px solid #000"
+            >
+              <h5 class="card-title">Trigger TO0</h5>
+              <form action="{% url 'triggerto0' %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-10">
+                    <input
+                      type="text"
+                      name="GUID"
+                      id="machineguid"
+                      class="form-control"
+                      placeholder="Enter Machine GUID Number"
+                    />
+                  </div>
+                  <div class="col-2">
+                    <button type="submit" name="RV_info" class="btn btn-danger">
+                      Submit
+                    </button>
+                    {% if TO0status %}{{ TO0status }}{% endif %}
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- macchine status -->
+          <div>
+            <div
+              class="card-body bg-primary text-white border-black"
+              style="border: 1px solid #000"
+            >
+              <h5 class="card-title">machine status check</h5>
+              <form action="{% url 'machinestatus' %}" method="post">
+                {% csrf_token %}
+                <input
+                  type="hidden"
+                  name="clientusername"
+                  id="clientusername"
+                  value="{{ user.username }}"
+                />
+                <div class="row">
+                  <div class="col-10">
+                    <input
+                      type="text"
+                      name="GUID"
+                      id="machineguid"
+                      class="form-control"
+                      placeholder="Enter Machine GUID Number"
+                    />
+                  </div>
+                  <div class="col-2">
+                    <button type="submit" name="RV_info" class="btn btn-danger">
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              </form>
+              <div
+                style="
+                  border: 1px solid #ccc;
+                  background-color: #f8f8f8;
+                  padding: 10px;
+                  margin-top: 10px;
+                  color: #000; /* 设置文本颜色为黑色 */
+                "
+              >
+                {% if machine_status %}{{machine_status}}{% endif %}
+              </div>
+            </div>
+          </div>
+          <!-- show all machine -->
+          <div>
+            <div
+              class="card-body bg-primary text-white border-black"
+              style="border: 1px solid #000"
+            >
+              <h5 class="card-title">all machine status</h5>
+              <form action="{% url 'showallmachinestatus' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" name="RV_info" class="btn btn-danger">
+                  Submit
+                </button>
+                <div class="table-responsive mt-3">
+                  <table class="table table-bordered table-striped bg-white">
+                    <thead>
+                      <tr>
+                        <th>GUID</th>
+                        <th>TO0 Timestamp</th>
+                        <th>TO2 Timestamp</th>
+                        <th>Owner</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for machine in machines %}
+                      <tr>
+                        <td>{{ machine.guid }}</td>
+                        <td>{{ machine.to0_timestamp|default:"N/A" }}</td>
+                        <td>{{ machine.to2_timestamp|default:"N/A" }}</td>
+                        <td>{{ machine.owner }}</td>
+                      </tr>
+
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </form>
+            </div>
+          </div>
           <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Logout</button>

@@ -8,3 +8,4 @@ front/__pycache__/
 mfg/__pycache__/
 mfg/migrations/
 .env
+owner/migrations/
