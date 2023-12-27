@@ -2,6 +2,7 @@ import json
 import os
 from django.http import HttpResponse
 from django.shortcuts import render
+import requests
 from mfg.forms import ServerInfoForm
 from postman.httprequest import post_http_digestAuth,get_http_digestAuth
 # Create your views here.
@@ -71,6 +72,20 @@ def get_all_list_machine_api(request):
 def trigger_to0_api(request):
     if request.method == 'POST':
         guid = request.POST.get('GUID')
+        clientusername = request.POST.get('clientusername')
+        # 构建要触发的 API URL
+        api_url = 'http://127.0.0.1:8000/front/rendezvous/api/to0_in'
+         # 准备 POST 请求的数据
+        data = {
+            'GUID': guid,
+            'clientusername': clientusername,  
+        }
+        # 发送 POST 请求
+        response = requests.post(api_url, data=data)
+        if response.ok:
+            print('rv_to0_information send ok')
+        else:
+            print('rv_to0_information send fail')
         url = f'https://fdosep.ofido.tw:8043/api/v1/to0/{guid}'
         # print(url)
         username = os.getenv('USERNAME')

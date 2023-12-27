@@ -16,7 +16,33 @@
           <h1>Welcome to the rendezvous Page</h1>
           {% if user.is_authenticated %}
           <p>Welcome, {{ user.username }}!</p>
-          <!-- 显示与用户相关的信息 -->
+          <form action="{% url 'listallto0' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+              show to0 information
+            </button>
+          </form>
+
+          <!-- 显示 to0_information 数据的表格 -->
+          <table class="table">
+            <thead>
+              <tr>
+                <th>GUID</th>
+                <th>Time</th>
+                <th>Owner Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for info in to0_infos %}
+              <tr>
+                <td>{{ info.guid }}</td>
+                <td>{{ info.to0_time }}</td>
+                <td>{{ info.owner_name }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
           <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Logout</button>
