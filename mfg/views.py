@@ -43,7 +43,7 @@ def rvinfo_api(request):
         api_url = "http://fdosep.ofido.tw:8039/api/v1/rvinfo"
         
         # 获取环境变量
-        username = os.getenv('USERNAME')
+        username = os.getenv('FDO_USERNAME')
         password = os.getenv('PASSWORD')
 
         # 使用获取的数据构造请求体
@@ -77,8 +77,9 @@ def owner_credential_get_api(request):
 
         url = request.POST.get('url', '')
         # print(url)
-        username = os.getenv('USERNAME')
+        username = os.getenv('FDO_USERNAME')
         password = os.getenv('PASSWORD')
+        print(username,password)
         response = get_http_digestAuth(url, username, password)
         # 假设服务器返回的是文本或JSON数据
         if response.ok:
@@ -124,7 +125,7 @@ def client_ms_list_api(request):
         clientusername =  request.POST.get('clientusername', '')
         print(seconds)
         url = f'https://fdosep.ofido.tw:8038/api/v1/deviceinfo/{seconds}'
-        username = os.getenv('USERNAME')
+        username = os.getenv('FDO_USERNAME')
         password = os.getenv('PASSWORD')
         response = get_http_digestAuth(url, username, password)
         print(response.content.decode('utf-8'))
@@ -215,7 +216,7 @@ def makeOwnershipVoucher_api(request):
             return HttpResponse("未找到指定的所有者服务器。")
 
         url = f'http://fdosep.ofido.tw:8039/api/v1/mfg/vouchers/{client_machine.serial_no}'
-        username = os.getenv('USERNAME')
+        username = os.getenv('FDO_USERNAME')
         password = os.getenv('PASSWORD')
         response = post_http_digestAuth(url, username, password, owner_server.credential)
 
@@ -263,7 +264,7 @@ def sendownership_api(request):
         # 提取ownership_voucher字段的内容
         ownership_voucher_content = ownership_voucher_instance.ownership_voucher
         url = owenr_url
-        username = os.getenv('USERNAME')
+        username = os.getenv('FDO_USERNAME')
         password = os.getenv('PASSWORD')
         response = post_http_digestAuth(url, username, password, ownership_voucher_content)
         print(response.content.decode('utf-8'))

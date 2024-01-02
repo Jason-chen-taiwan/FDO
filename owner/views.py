@@ -58,7 +58,7 @@ def RVBlod_TO2_deriction_api(request):
 def get_all_list_machine_api(request):
     if request.method == 'POST':
         url = 'http://fdosep.ofido.tw:8042/api/v1/owner/vouchers'
-        username = os.getenv('USERNAME')
+        username = os.getenv('FDO_USERNAME')
         password = os.getenv('PASSWORD')
         response = get_http_digestAuth(url, username, password)
         print(response.content.decode('utf-8'))
@@ -88,7 +88,7 @@ def trigger_to0_api(request):
             print('rv_to0_information send fail')
         url = f'https://fdosep.ofido.tw:8043/api/v1/to0/{guid}'
         # print(url)
-        username = os.getenv('USERNAME')
+        username = os.getenv('FDO_USERNAME')
         password = os.getenv('PASSWORD')
         response = get_http_digestAuth(url, username, password)
         contex = initial_page_context()
@@ -109,7 +109,7 @@ def machine_status_api(request):
         guid = request.POST.get('GUID')
         ownername = request.POST.get('clientusername')
         url = f'http://fdosep.ofido.tw:8042/api/v1/owner/state/{guid}'
-        username = os.getenv('USERNAME')
+        username = os.getenv('FDO_USERNAME')
         password = os.getenv('PASSWORD')
         # 假设 response 是您通过 get_http_digestAuth 获得的响应对象
         response = get_http_digestAuth(url, username, password)
