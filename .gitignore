@@ -5,8 +5,17 @@ front/migrations/
 FDO_DEMO/__pycache__/
 
 front/__pycache__/
+
 mfg/__pycache__/
 mfg/migrations/
 .env
+
 owner/migrations/
+owner/__pycache__
+
 rv/migrations/
+
+postman/__pycache__
+rv/__pycache__
+
+myenv/
